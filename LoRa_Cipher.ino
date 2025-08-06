@@ -14,6 +14,7 @@
 
 SSD1306Wire display(0x3c, SDA_OLED, SCL_OLED);
 
+String host = "Guga";
 String chave = "redesdecomputadores";
 String mensagem_recebida = "";
 String mensagem_enviada = "";
@@ -55,9 +56,23 @@ void displayReset(void) {
 
 String formatarTexto(String texto, int larguraMaxima = 26) {
 
+  int i;
+  
   String resultado = "";
 
-  for (int i = 0; i < texto.length(); i++) {
+  for (i = 0; texto[i] != '\n'; i++) {
+
+    resultado += texto[i];
+
+  }
+
+  resultado += texto[i];
+
+  i = i + 1;
+
+  texto = texto.substring(i);
+
+  for (i = 0; i < texto.length(); i++) {
 
     resultado += texto[i];
 
@@ -80,22 +95,7 @@ void imprimeMensagem(String texto) {
 
   display.setTextAlignment(TEXT_ALIGN_LEFT);
 
-  String inicio;
-
-  if (sender) {
-
-    inicio = "Enviado: \n";
-
-  }
-  else {
-
-    inicio = "Recebido: \n";
-
-  }
-
-  display.drawString(0, 0, inicio);
-
-  display.drawString(0, 15, formatarTexto(texto));
+  display.drawString(0, 0, formatarTexto(texto));
 
   display.display();
 
@@ -215,6 +215,8 @@ void loop() {
       
       sender = true;
 
+      mensagem_enviada = host + " enviou:\n" + mensagem_enviada;
+
       String mensagem_criptografada = criptografar(mensagem_enviada, chave);
 
       LoRa.beginPacket();
@@ -228,7 +230,7 @@ void loop() {
       Serial.println(mensagem_criptografada);
 
       display.clear();
-      imprimeMensagem (mensagem_criptografada);
+      imprimeMensagem (mensagem_enviada);
       display.display();
 
       mensagem_enviada = "";

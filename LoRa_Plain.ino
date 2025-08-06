@@ -14,6 +14,7 @@
 
 SSD1306Wire display(0x3c, SDA_OLED, SCL_OLED);
 
+String host = "nome";
 String mensagem_recebida = "";
 String mensagem_enviada = "";
 bool sender;
@@ -54,9 +55,23 @@ void displayReset(void) {
 
 String formatarTexto(String texto, int larguraMaxima = 26) {
 
+  int i;
+  
   String resultado = "";
 
-  for (int i = 0; i < texto.length(); i++) {
+  for (i = 0; texto[i] != '\n'; i++) {
+
+    resultado += texto[i];
+
+  }
+
+  resultado += texto[i];
+
+  i = i + 1;
+
+  texto = texto.substring(i);
+
+  for (i = 0; i < texto.length(); i++) {
 
     resultado += texto[i];
 
@@ -79,22 +94,7 @@ void imprimeMensagem(String texto) {
 
   display.setTextAlignment(TEXT_ALIGN_LEFT);
 
-  String inicio;
-
-  if (sender) {
-
-    inicio = "Enviado: \n";
-
-  }
-  else {
-
-    inicio = "Recebido: \n";
-
-  }
-
-  display.drawString(0, 0, inicio);
-
-  display.drawString(0, 15, formatarTexto(texto));
+  display.drawString(0, 0, formatarTexto(texto));
 
   display.display();
 
@@ -193,6 +193,8 @@ void loop() {
     if (mensagem_enviada.length() > 0) {
       
       sender = true;
+
+      mensagem_enviada = host + " enviou:\n" + mensagem_enviada;
 
       LoRa.beginPacket();
       LoRa.print(mensagem_enviada);
