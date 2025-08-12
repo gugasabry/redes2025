@@ -14,7 +14,7 @@
 
 SSD1306Wire display(0x3c, SDA_OLED, SCL_OLED);
 
-String host = "Guga";
+String host = "nome";
 String chave = "redesdecomputadores";
 String mensagem_recebida = "";
 String mensagem_enviada = "";
@@ -243,8 +243,6 @@ void loop() {
   int pacoteRecebido = LoRa.parsePacket();
 
   if (pacoteRecebido) {
-
-    sender = false;
 
     mensagem_recebida = "";
 
